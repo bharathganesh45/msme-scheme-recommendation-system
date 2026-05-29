@@ -1,0 +1,232 @@
+.scheme-details-container {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scheme-details-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.details-header h1 {
+  color: #2c3e50;
+  font-size: 28px;
+  margin: 0;
+  flex: 1;
+}
+
+.eligible-badge {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.details-description {
+  color: #555;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+/* Details Sections */
+.details-section {
+  margin-bottom: 32px;
+}
+
+.details-section h2 {
+  color: #2c3e50;
+  font-size: 18px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #667eea;
+  display: inline-block;
+}
+
+/* Criteria List */
+.criteria-list,
+.benefits-list,
+.info-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.criteria-item,
+.benefit-item,
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: #f9f9f9;
+  border-left: 4px solid #667eea;
+  border-radius: 4px;
+}
+
+.criteria-label,
+.benefit-label,
+.info-label {
+  color: #7f8c8d;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.criteria-value,
+.benefit-value,
+.info-value {
+  color: #2c3e50;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.benefit-item.highlight {
+  background-color: #fff3cd;
+  border-left-color: #27ae60;
+}
+
+.benefit-item.highlight .benefit-value {
+  color: #27ae60;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.no-criteria {
+  color: #7f8c8d;
+  font-size: 14px;
+  font-style: italic;
+  padding: 12px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+/* Next Steps */
+.next-steps-list {
+  list-style-position: inside;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 20px;
+  padding-left: 20px;
+}
+
+.next-steps-list li {
+  margin-bottom: 12px;
+}
+
+.cta-section {
+  background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+  padding: 24px;
+  border-radius: 8px;
+  border-left: 4px solid #27ae60;
+}
+
+.cta-section h2 {
+  color: #2c3e50;
+  border-bottom-color: #27ae60;
+  margin-bottom: 16px;
+}
+
+/* Beneficiary Categories */
+.beneficiary-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.beneficiary-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f0f4ff;
+  border-left: 4px solid #667eea;
+  border-radius: 4px;
+  gap: 12px;
+}
+
+.beneficiary-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: #27ae60;
+  color: white;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.beneficiary-value {
+  color: #2c3e50;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .scheme-details-card {
+    padding: 20px;
+  }
+
+  .details-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .details-header h1 {
+    font-size: 22px;
+  }
+
+  .eligible-badge {
+    width: 100%;
+    text-align: center;
+  }
+
+  .criteria-list,
+  .benefits-list,
+  .info-list {
+    grid-template-columns: 1fr;
+  }
+
+  .criteria-item,
+  .benefit-item,
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .beneficiary-list {
+    grid-template-columns: 1fr;
+  }
+
+  .details-section h2 {
+    font-size: 16px;
+  }
+}
