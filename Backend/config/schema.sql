@@ -1,10 +1,10 @@
 
 
---Enable UUID extension 
+ 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 
--- Create users table
+
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -21,24 +21,24 @@ CREATE TABLE schemes (
  name TEXT NOT NULL UNIQUE,
  description TEXT,
 
- -- core filters (fast queries)
+
  business_category TEXT,
  max_investment INT,
  location TEXT,
 
- -- flexible rules
+ 
  rules JSONB,
 
- -- benefits
+ 
  benefits JSONB,
 
- -- beneficiary categories
+ 
  beneficiary_categories JSONB,
 
  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create user saved schemes table
+
 CREATE TABLE IF NOT EXISTS user_saved_schemes (
     id SERIAL PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
