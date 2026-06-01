@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -97,6 +97,44 @@ export const authAPI = {
   getUser: () => {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
+  },
+
+  // Request password reset (send OTP)
+  requestPasswordReset: async (email) => {
+    try {
+      const response = await apiClient.post('/auth/reset-password/request', { email });
+      return response.data;
+    } catch (error) {
+      console.error('Error requesting password reset:', error);
+      throw error;
+    }
+  },
+
+  // Verify OTP for password reset
+  verifyPasswordResetOTP: async (email, otp) => {
+    try {
+      const response = await apiClient.post('/auth/reset-password/verify-otp', { email, otp });
+      return response.data;
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      throw error;
+    }
+  },
+
+  // Reset password
+  resetPassword: async (email, otp, newPassword, confirmPassword) => {
+    try {
+      const response = await apiClient.post('/auth/reset-password', { 
+        email, 
+        otp, 
+        newPassword, 
+        confirmPassword 
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error resetting password:', error);
+      throw error;
+    }
   },
 };
 

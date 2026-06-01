@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/ForgotPassword.css';
+import { authAPI } from '../services/api';
 
 const ForgotPassword = ({ onNavigate }) => {
   const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: New Password
@@ -39,13 +40,19 @@ const ForgotPassword = ({ onNavigate }) => {
 
     setIsSubmitting(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await authAPI.requestPasswordReset(email);
+      
+      if (!response.success) {
+        setError(response.message || 'Failed to send OTP. Please try again.');
+        return;
+      }
+
       setStep(2);
-      setOtpTimer(300); // 5 minutes
+      setOtpTimer(600); // 10 minutes
       setSuccessMsg('OTP sent to your email');
     } catch (err) {
-      setError('Failed to send OTP. Please try again.');
+      setError('Failed to send OTP. Please check your connection and try again.');
+      console.error('Send OTP error:', err);
     } finally {
       setIsSubmitting(false);
     }
@@ -62,11 +69,18 @@ const ForgotPassword = ({ onNavigate }) => {
 
     setIsSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await authAPI.verifyPasswordResetOTP(email, otp);
+
+      if (!response.success) {
+        setError(response.message || 'Invalid OTP. Please try again.');
+        return;
+      }
+
       setStep(3);
       setSuccessMsg('');
     } catch (err) {
-      setError('Invalid OTP. Please try again.');
+      setError('Failed to verify OTP. Please try again.');
+      console.error('Verify OTP error:', err);
     } finally {
       setIsSubmitting(false);
     }
@@ -93,11 +107,21 @@ const ForgotPassword = ({ onNavigate }) => {
 
     setIsSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await authAPI.resetPassword(email, otp, newPassword, confirmPassword);
+
+      if (!response.success) {
+        setError(response.message || 'Failed to reset password. Please try again.');
+        return;
+      }
+
       setStep(4);
     } catch (err) {
       setError('Failed to reset password. Please try again.');
+      console.error('Reset password error:', err);
     } finally {
+      setIsSubmitting(false);
+    }
+  };
       setIsSubmitting(false);
     }
   };

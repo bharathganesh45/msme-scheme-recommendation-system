@@ -76,6 +76,62 @@ class User {
     static async delete (id) {
         await db.query('DELETE FROM users WHERE id = $1',[id]);
     }
+
+    // Generate and store OTP for password reset
+
+    static async generatePasswordResetOTP(email) {
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+        const result = await db.query(
+            `UPDATE users 
+            SET reset_otp = $1, reset_otp_expires = $2
+            WHERE email = $3
+            RETURNING id, email`,
+            [otp, otpExpires, email]
+        );
+
+        return result.rows[0] ? otp : null;
+    }
+
+    // Verify OTP
+
+    static async verifyPasswordResetOTP(email, otp) {
+        const result = await db.query(
+            `SELECT * FROM users 
+            WHERE email = $1 AND reset_otp = $2 AND reset_otp_expires > NOW()`,
+            [email, otp]
+        );
+
+        return result.rows[0] || null;
+    }
+
+    // Complete password reset
+
+    static async completePasswordReset(email, newPassword) {
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        const result = await db.query(
+            `UPDATE users 
+            SET password_hash = $1, reset_otp = NULL, reset_otp_expires = NULL, updated_at = NOW()
+            WHERE email = $2
+            RETURNING id, email, name`,
+            [hashedPassword, email]
+        );
+
+        return result.rows[0] || null;
+    }
+
+    // Clear OTP after expiration or use
+
+    static async clearPasswordResetOTP(email) {
+        await db.query(
+            `UPDATE users 
+            SET reset_otp = NULL, reset_otp_expires = NULL
+            WHERE email = $1`,
+            [email]
+        );
+    }
 }
 
 

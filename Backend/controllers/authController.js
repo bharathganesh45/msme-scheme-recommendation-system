@@ -210,31 +210,152 @@ export const updateProfile = async (req, res, next) => {
 
 
 
-// request reset password (placeholder - would send email in production)
+// request reset password (send OTP via email)
 
 
 export const requestPasswordReset = async (req, res, next) =>{
     try{
         const { email } = req.body;
 
-
         if (!email) {
             return res.status(400).json({
                 success: false,
-                message: 'please provide email'
+                message: 'Please provide email'
             });
         }
     
         const user = await User.findByEmail(email);
 
+        if (!user) {
+            return res.status(200).json({
+                success: true,
+                message: 'If an account exists with this email, a password reset code has been sent'
+            });
+        }
 
-        //dont reveal if user exists or not for security
-        res.json({
+        // Generate OTP
+        const otp = await User.generatePasswordResetOTP(email);
+
+        // In production, send OTP via email service
+        // For now, we'll log it (in real app use nodemailer or similar)
+        console.log(`Password reset OTP for ${email}: ${otp}`);
+
+        // Send success response (don't reveal if user exists for security)
+        res.status(200).json({
             success: true,
-            message: 'If an account exists with this email, a password reset link has been send'
+            message: 'If an account exists with this email, a password reset code has been sent',
+            // Remove this in production - only for testing:
+            // otp: otp
         });
     
-    } catch {
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Verify OTP for password reset
+
+export const verifyPasswordResetOTP = async (req, res, next) => {
+    try {
+        const { email, otp } = req.body;
+
+        if (!email || !otp) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide email and OTP'
+            });
+        }
+
+        const user = await User.verifyPasswordResetOTP(email, otp);
+
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid or expired OTP'
+            });
+        }
+
+        // Generate a temporary token for password reset (valid for 15 minutes)
+        const resetToken = jwt.sign(
+            { email, purpose: 'password_reset' },
+            process.env.JWT_SECRET,
+            { expiresIn: '15m' }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: 'OTP verified successfully',
+            data: {
+                resetToken
+            }
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Reset password with OTP verification
+
+export const resetPassword = async (req, res, next) => {
+    try {
+        const { email, otp, newPassword, confirmPassword } = req.body;
+
+        // Validation
+        if (!email || !otp || !newPassword || !confirmPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide email, OTP, and new password'
+            });
+        }
+
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'Passwords do not match'
+            });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'Password must be at least 6 characters'
+            });
+        }
+
+        // Verify OTP
+        const user = await User.verifyPasswordResetOTP(email, otp);
+
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid or expired OTP'
+            });
+        }
+
+        // Update password
+        const updatedUser = await User.completePasswordReset(email, newPassword);
+
+        if (!updatedUser) {
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to reset password'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Password reset successfully',
+            data: {
+                user: {
+                    id: updatedUser.id,
+                    email: updatedUser.email,
+                    name: updatedUser.name
+                }
+            }
+        });
+
+    } catch (error) {
         next(error);
     }
 };
