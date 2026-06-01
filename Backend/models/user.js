@@ -81,7 +81,7 @@ class User {
 
     static async generatePasswordResetOTP(email) {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+        const otpExpires = new Date(Date.now() + 90 * 1000); // 90 seconds
 
         const result = await db.query(
             `UPDATE users 

@@ -53,7 +53,7 @@ const ForgotPassword = ({ onNavigate }) => {
       setNewPassword('');
       setConfirmPassword('');
       setStep(2);
-      setOtpTimer(600); // 10 minutes
+      setOtpTimer(90); // 90 seconds
       setSuccessMsg('OTP sent to your email. Check your inbox.');
     } catch (err) {
       setError('Failed to send OTP. Please check your connection and try again.');
