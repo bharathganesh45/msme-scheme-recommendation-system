@@ -106,18 +106,19 @@
 
 .forgot-password-container {
   text-align: right;
-  margin-bottom: 16px;
+  margin-bottom: -8px;
   margin-top: -10px;
 }
 
 .forgot-password-btn {
   background: none;
   border: none;
-  color: #667eea;
+  color: #0d0d0e;
   cursor: pointer;
-  font-size: 13px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
   font-weight: 500;
-  padding: 0;
   transition: all 0.3s ease;
   text-decoration: none;
 }

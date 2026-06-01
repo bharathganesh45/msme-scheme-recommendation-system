@@ -1,9 +1,10 @@
 
-
  
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-
+-- Drop dependent tables first if they exist
+DROP TABLE IF EXISTS user_saved_schemes CASCADE;
+DROP TABLE IF EXISTS schemes CASCADE;
 
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -17,7 +18,6 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-DROP TABLE IF EXISTS schemes;
 CREATE TABLE schemes (
  id SERIAL PRIMARY KEY,
  name TEXT NOT NULL UNIQUE,

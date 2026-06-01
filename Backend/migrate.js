@@ -47,6 +47,17 @@ async function runMigration() {
         `);
         console.log('Phone column added to users table');
 
+        // Add password reset OTP columns if they don't exist
+        await client.query(`
+            ALTER TABLE users
+            ADD COLUMN IF NOT EXISTS reset_otp VARCHAR(6);
+        `);
+        await client.query(`
+            ALTER TABLE users
+            ADD COLUMN IF NOT EXISTS reset_otp_expires TIMESTAMP;
+        `);
+        console.log('Password reset OTP columns added to users table');
+
         // Create user_saved_schemes table if it doesn't exist
         await client.query(`
             CREATE TABLE IF NOT EXISTS user_saved_schemes (
@@ -229,25 +240,6 @@ async function runMigration() {
         `);
         
     
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-
 
         console.log('Database migration completed succesfull');
         console.log('Table created');
