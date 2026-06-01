@@ -122,9 +122,6 @@ const ForgotPassword = ({ onNavigate }) => {
       setIsSubmitting(false);
     }
   };
-      setIsSubmitting(false);
-    }
-  };
 
   const handleBackToSignIn = () => {
     if (onNavigate) {
