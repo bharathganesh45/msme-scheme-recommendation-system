@@ -27,8 +27,9 @@ const ForgotPassword = ({ onNavigate }) => {
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMsg('');
 
-    if (!email) {
+    if (!email.trim()) {
       setError('Please enter your email address');
       return;
     }
@@ -40,16 +41,20 @@ const ForgotPassword = ({ onNavigate }) => {
 
     setIsSubmitting(true);
     try {
-      const response = await authAPI.requestPasswordReset(email);
+      const response = await authAPI.requestPasswordReset(email.trim());
       
       if (!response.success) {
         setError(response.message || 'Failed to send OTP. Please try again.');
         return;
       }
 
+      // Clear sensitive fields when moving to next step
+      setOtp('');
+      setNewPassword('');
+      setConfirmPassword('');
       setStep(2);
       setOtpTimer(600); // 10 minutes
-      setSuccessMsg('OTP sent to your email');
+      setSuccessMsg('OTP sent to your email. Check your inbox.');
     } catch (err) {
       setError('Failed to send OTP. Please check your connection and try again.');
       console.error('Send OTP error:', err);
@@ -61,9 +66,16 @@ const ForgotPassword = ({ onNavigate }) => {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMsg('');
 
     if (!otp || otp.length !== 6) {
       setError('Please enter a valid 6-digit OTP');
+      return;
+    }
+
+    if (otpTimer === 0) {
+      setError('OTP has expired. Please request a new one.');
+      setStep(1);
       return;
     }
 
@@ -76,6 +88,9 @@ const ForgotPassword = ({ onNavigate }) => {
         return;
       }
 
+      // Clear password fields when moving to next step
+      setNewPassword('');
+      setConfirmPassword('');
       setStep(3);
       setSuccessMsg('');
     } catch (err) {
@@ -89,6 +104,7 @@ const ForgotPassword = ({ onNavigate }) => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMsg('');
 
     if (!newPassword) {
       setError('Please enter a new password');
@@ -96,12 +112,24 @@ const ForgotPassword = ({ onNavigate }) => {
     }
 
     if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+
+    if (!confirmPassword) {
+      setError('Please confirm your password');
       return;
     }
 
     if (newPassword !== confirmPassword) {
       setError('Passwords do not match');
+      return;
+    }
+
+    // Check password strength: at least one uppercase, one lowercase, one number
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+    if (!strongPasswordRegex.test(newPassword)) {
+      setError('Password must contain at least one uppercase letter, one lowercase letter, and one number');
       return;
     }
 
@@ -124,9 +152,25 @@ const ForgotPassword = ({ onNavigate }) => {
   };
 
   const handleBackToSignIn = () => {
+    // Clear all sensitive data before navigating
+    setEmail('');
+    setOtp('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setError('');
+    setSuccessMsg('');
+    setStep(1);
+    setOtpTimer(0);
     if (onNavigate) {
       onNavigate('signin');
     }
+  };
+
+  const handleResendOtp = () => {
+    setOtp('');
+    setError('');
+    setSuccessMsg('');
+    setStep(1);
   };
 
   const formatTimer = (seconds) => {
@@ -209,7 +253,7 @@ const ForgotPassword = ({ onNavigate }) => {
                 {otpTimer > 0 ? (
                   <p>OTP expires in: <strong>{formatTimer(otpTimer)}</strong></p>
                 ) : (
-                  <p>OTP expired. <button type="button" onClick={() => setStep(1)} className="resend-link">Resend OTP</button></p>
+                  <p>OTP expired. <button type="button" onClick={handleResendOtp} className="resend-link">Resend OTP</button></p>
                 )}
               </div>
 
@@ -250,6 +294,9 @@ const ForgotPassword = ({ onNavigate }) => {
                   placeholder="••••••••"
                   className="form-input"
                 />
+                <small className="password-hint">
+                  Password must be at least 6 characters with one uppercase, one lowercase, and one number
+                </small>
               </div>
 
               <div className="form-group">
