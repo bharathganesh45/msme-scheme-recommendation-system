@@ -60,10 +60,12 @@ const MyCollections = ({ onClose, savedSchemes = [] }) => {
   return (
     <>
       {selectedScheme ? (
-        <SchemeDetails
-          scheme={selectedScheme}
-          onBack={() => setSelectedScheme(null)}
-        />
+        <div className="scheme-details-full-view">
+          <SchemeDetails
+            scheme={selectedScheme}
+            onBack={() => setSelectedScheme(null)}
+          />
+        </div>
       ) : (
         <div className="my-collections-modal-overlay" onClick={onClose}>
           <div className="my-collections-modal" onClick={(e) => e.stopPropagation()}>

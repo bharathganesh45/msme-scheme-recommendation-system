@@ -270,3 +270,28 @@
     font-size: 36px;
   }
 }
+
+/* Full Screen Scheme Details View */
+.scheme-details-full-view {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f8f9fa;
+  z-index: 3000;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.scheme-details-full-view .scheme-details-container {
+  width: 100%;
+  max-width: 800px;
+  padding: 20px 0;
+}
+
+.scheme-details-full-view .btn-back {
+  margin-bottom: 20px;
+}
