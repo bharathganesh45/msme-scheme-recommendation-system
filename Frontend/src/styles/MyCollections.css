@@ -281,17 +281,52 @@
   background-color: #f8f9fa;
   z-index: 3000;
   overflow-y: auto;
-  padding: 20px;
+  padding: 30px 20px;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
+  animation: slideInFullScreen 0.3s ease-out;
+}
+
+@keyframes slideInFullScreen {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .scheme-details-full-view .scheme-details-container {
   width: 100%;
-  max-width: 800px;
-  padding: 20px 0;
+  max-width: 900px;
+  padding: 0;
+}
+
+.scheme-details-full-view .scheme-details-card {
+  width: 100%;
+  margin: 0;
 }
 
 .scheme-details-full-view .btn-back {
-  margin-bottom: 20px;
+  width: auto;
+  margin-bottom: 24px;
+}
+
+/* Responsive full screen view */
+@media (max-width: 768px) {
+  .scheme-details-full-view {
+    padding: 16px 12px;
+  }
+
+  .scheme-details-full-view .scheme-details-card {
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .scheme-details-full-view .btn-back {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
 }
